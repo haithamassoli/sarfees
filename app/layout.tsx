@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Geist_Mono, IBM_Plex_Sans_Arabic, Noto_Kufi_Arabic } from "next/font/google";
 import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
 import { ConvexClientProvider } from "@/components/convex-client-provider";
-import { AppShell } from "@/components/app-shell";
 import { InstallPrompt } from "@/components/install-prompt";
 import { SwRegister } from "@/components/sw-register";
 import { Toaster } from "@/components/ui/sonner";
@@ -27,18 +26,40 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const brandTitle = `${t("app_name")} — ${t("app_tagline")}`;
+
+// Landing-page screenshot served from /public. Declared here rather than via
+// the app/opengraph-image file convention so layout.tsx stays the single
+// source of truth; per-route opengraph-image.tsx cards (trips, requests,
+// routes) still override it on their own pages — file-based metadata wins.
+const ogImage = { url: "/opengraph-image.png", width: 1200, height: 630, alt: brandTitle };
+
 export const metadata: Metadata = {
-  // Resolves relative OG/twitter URLs (and the generated og:image) to
-  // absolute ones — WhatsApp et al. refuse relative unfurl URLs.
+  // Resolves relative OG/twitter URLs to absolute ones — WhatsApp et al.
+  // refuse relative unfurl URLs.
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${t("app_name")} — ${t("app_tagline")}`,
+    default: brandTitle,
     template: `%s — ${t("app_name")}`,
   },
   description: t("app_description"),
   applicationName: t("app_name"),
   appleWebApp: { capable: true, statusBarStyle: "default", title: t("app_name") },
   icons: { apple: "/apple-touch-icon.png" },
+  openGraph: {
+    type: "website",
+    siteName: t("app_name"),
+    title: brandTitle,
+    description: t("app_description"),
+    locale: "ar_JO",
+    images: [ogImage],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: brandTitle,
+    description: t("app_description"),
+    images: [ogImage],
+  },
 };
 
 export const viewport: Viewport = {
@@ -62,7 +83,7 @@ export default function RootLayout({
       >
         <body className="min-h-full">
           <ConvexClientProvider>
-            <AppShell>{children}</AppShell>
+            {children}
             <SwRegister />
             <InstallPrompt />
             {/* top-center: the bottom tab bar owns the bottom edge on mobile */}
