@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist_Mono, IBM_Plex_Sans_Arabic, Noto_Kufi_Arabic } from "next/font/google";
 import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
+import { AppShell } from "@/components/app-shell";
 import { ConvexClientProvider } from "@/components/convex-client-provider";
 import { InstallPrompt } from "@/components/install-prompt";
 import { SwRegister } from "@/components/sw-register";
@@ -83,7 +84,7 @@ export default function RootLayout({
       >
         <body className="min-h-full">
           <ConvexClientProvider>
-            {children}
+            <AppShell>{children}</AppShell>
             <SwRegister />
             <InstallPrompt />
             {/* top-center: the bottom tab bar owns the bottom edge on mobile */}

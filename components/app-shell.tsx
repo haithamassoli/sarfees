@@ -45,6 +45,13 @@ function isActive(pathname: string, href: string) {
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
+  // The marketing landing renders bare — no header/tab-bar chrome. This
+  // replaces the old app/(app) route group, which scoped AppShell to app
+  // routes only. ponytail: path check, not a route group.
+  if (pathname === "/landing" || pathname.startsWith("/landing/")) {
+    return <>{children}</>;
+  }
+
   return (
     <div className="flex min-h-dvh flex-col">
       <header className="sticky top-0 z-40 border-b bg-background/90 backdrop-blur">
