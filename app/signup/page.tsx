@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { normalizeJordanPhone } from "@/convex/lib/shared";
 import { errorMessage } from "@/lib/errors";
 import { t } from "@/lib/i18n";
+import { nameSchema, passwordSchema, phoneSchema } from "@/lib/validators";
 
 export default function SignupPage() {
   const { signIn } = useAuthActions();
@@ -62,17 +63,7 @@ export default function SignupPage() {
               void form.handleSubmit();
             }}
           >
-            <form.Field
-              name="name"
-              validators={{
-                onSubmit: ({ value }) => {
-                  const len = value.trim().length;
-                  return len >= 2 && len <= 60
-                    ? undefined
-                    : t("error_invalid_name");
-                },
-              }}
-            >
+            <form.Field name="name" validators={{ onSubmit: nameSchema }}>
               {(field) => (
                 <div className="flex flex-col gap-1.5">
                   <Label htmlFor={field.name}>{t("name")}</Label>
@@ -92,15 +83,7 @@ export default function SignupPage() {
               )}
             </form.Field>
 
-            <form.Field
-              name="phone"
-              validators={{
-                onSubmit: ({ value }) =>
-                  normalizeJordanPhone(value) === null
-                    ? t("error_invalid_phone")
-                    : undefined,
-              }}
-            >
+            <form.Field name="phone" validators={{ onSubmit: phoneSchema }}>
               {(field) => (
                 <div className="flex flex-col gap-1.5">
                   <Label htmlFor={field.name}>{t("phone")}</Label>
@@ -124,10 +107,7 @@ export default function SignupPage() {
 
             <form.Field
               name="password"
-              validators={{
-                onSubmit: ({ value }) =>
-                  value.length >= 8 ? undefined : t("error_weak_password"),
-              }}
+              validators={{ onSubmit: passwordSchema }}
             >
               {(field) => (
                 <div className="flex flex-col gap-1.5">

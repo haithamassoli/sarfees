@@ -20,11 +20,11 @@ import { NativeSelect } from "@/components/ui/native-select";
 import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/convex/_generated/api";
 import type { Gov } from "@/convex/lib/shared";
-import { isValidPrice } from "@/convex/lib/text";
 import { markEngaged } from "@/lib/engagement";
 import { errorMessage } from "@/lib/errors";
 import { seatsLabel, t } from "@/lib/i18n";
 import { ammanToday, ammanWallClockToMs, fmtDayTime } from "@/lib/time";
+import { dateSchema, priceSchema, timeSchema } from "@/lib/validators";
 import { cn } from "@/lib/utils";
 
 type CreateResult = FunctionReturnType<typeof api.trips.createTrip>;
@@ -153,13 +153,7 @@ function NewTripForm({ onPosted }: { onPosted: (trip: PostedTrip) => void }) {
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <form.Field
-                name="date"
-                validators={{
-                  onSubmit: ({ value }) =>
-                    value === "" ? t("error_date_required") : undefined,
-                }}
-              >
+              <form.Field name="date" validators={{ onSubmit: dateSchema }}>
                 {(field) => (
                   <div className="flex flex-col gap-1.5">
                     <Label htmlFor={field.name}>{t("date")}</Label>
@@ -179,13 +173,7 @@ function NewTripForm({ onPosted }: { onPosted: (trip: PostedTrip) => void }) {
                   </div>
                 )}
               </form.Field>
-              <form.Field
-                name="time"
-                validators={{
-                  onSubmit: ({ value }) =>
-                    value === "" ? t("error_time_required") : undefined,
-                }}
-              >
+              <form.Field name="time" validators={{ onSubmit: timeSchema }}>
                 {(field) => (
                   <div className="flex flex-col gap-1.5">
                     <Label htmlFor={field.name}>{t("time")}</Label>
@@ -226,15 +214,7 @@ function NewTripForm({ onPosted }: { onPosted: (trip: PostedTrip) => void }) {
                   </div>
                 )}
               </form.Field>
-              <form.Field
-                name="price"
-                validators={{
-                  onSubmit: ({ value }) =>
-                    value.trim() === "" || !isValidPrice(Number(value))
-                      ? t("error_invalid_price")
-                      : undefined,
-                }}
-              >
+              <form.Field name="price" validators={{ onSubmit: priceSchema }}>
                 {(field) => (
                   <div className="flex flex-col gap-1.5">
                     <Label htmlFor={field.name}>{t("price_per_seat")}</Label>

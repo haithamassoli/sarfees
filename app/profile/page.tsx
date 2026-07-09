@@ -19,6 +19,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { errorMessage } from "@/lib/errors";
 import { t } from "@/lib/i18n";
 import { fmtDay } from "@/lib/time";
+import { nameSchema } from "@/lib/validators";
 
 type Viewer = NonNullable<FunctionReturnType<typeof api.users.viewer>>;
 
@@ -173,17 +174,7 @@ function ProfileForm({ viewer }: { viewer: Viewer }) {
             void form.handleSubmit();
           }}
         >
-          <form.Field
-            name="name"
-            validators={{
-              onSubmit: ({ value }) => {
-                const len = value.trim().length;
-                return len >= 2 && len <= 60
-                  ? undefined
-                  : t("error_invalid_name");
-              },
-            }}
-          >
+          <form.Field name="name" validators={{ onSubmit: nameSchema }}>
             {(field) => (
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor={field.name}>{t("name")}</Label>

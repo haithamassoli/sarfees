@@ -24,6 +24,7 @@ import { markEngaged } from "@/lib/engagement";
 import { errorMessage } from "@/lib/errors";
 import { seatsLabel, t } from "@/lib/i18n";
 import { ammanToday, ammanWallClockToMs, fmtDayTime } from "@/lib/time";
+import { dateSchema, timeSchema } from "@/lib/validators";
 import { cn } from "@/lib/utils";
 
 type CreateResult = FunctionReturnType<typeof api.requests.createRequest>;
@@ -144,13 +145,7 @@ function NewRequestForm({
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <form.Field
-                name="date"
-                validators={{
-                  onSubmit: ({ value }) =>
-                    value === "" ? t("error_date_required") : undefined,
-                }}
-              >
+              <form.Field name="date" validators={{ onSubmit: dateSchema }}>
                 {(field) => (
                   <div className="flex flex-col gap-1.5">
                     <Label htmlFor={field.name}>{t("date")}</Label>
@@ -170,13 +165,7 @@ function NewRequestForm({
                   </div>
                 )}
               </form.Field>
-              <form.Field
-                name="time"
-                validators={{
-                  onSubmit: ({ value }) =>
-                    value === "" ? t("error_time_required") : undefined,
-                }}
-              >
+              <form.Field name="time" validators={{ onSubmit: timeSchema }}>
                 {(field) => (
                   <div className="flex flex-col gap-1.5">
                     <Label htmlFor={field.name}>{t("time")}</Label>

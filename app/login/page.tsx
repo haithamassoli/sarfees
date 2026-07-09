@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { normalizeJordanPhone } from "@/convex/lib/shared";
 import { errorMessage } from "@/lib/errors";
 import { t } from "@/lib/i18n";
+import { passwordRequiredSchema, phoneSchema } from "@/lib/validators";
 
 export default function LoginPage() {
   const { signIn } = useAuthActions();
@@ -60,15 +61,7 @@ export default function LoginPage() {
               void form.handleSubmit();
             }}
           >
-            <form.Field
-              name="phone"
-              validators={{
-                onSubmit: ({ value }) =>
-                  normalizeJordanPhone(value) === null
-                    ? t("error_invalid_phone")
-                    : undefined,
-              }}
-            >
+            <form.Field name="phone" validators={{ onSubmit: phoneSchema }}>
               {(field) => (
                 <div className="flex flex-col gap-1.5">
                   <Label htmlFor={field.name}>{t("phone")}</Label>
@@ -92,10 +85,7 @@ export default function LoginPage() {
 
             <form.Field
               name="password"
-              validators={{
-                onSubmit: ({ value }) =>
-                  value.length > 0 ? undefined : t("error_password_required"),
-              }}
+              validators={{ onSubmit: passwordRequiredSchema }}
             >
               {(field) => (
                 <div className="flex flex-col gap-1.5">
