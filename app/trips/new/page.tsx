@@ -6,7 +6,7 @@ import { useMutation } from "convex/react";
 import type { FunctionReturnType } from "convex/server";
 import { useForm } from "@tanstack/react-form";
 import { CircleCheck } from "lucide-react";
-import { FieldError } from "@/components/field-error";
+import { FieldError, FormError } from "@/components/field-error";
 import { GovSelect } from "@/components/gov-select";
 import { PushToggle } from "@/components/push-toggle";
 import { RequestCard } from "@/components/request-card";
@@ -20,11 +20,11 @@ import { NativeSelect } from "@/components/ui/native-select";
 import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/convex/_generated/api";
 import type { Gov } from "@/convex/lib/shared";
-import { isValidPrice } from "@/convex/lib/text";
 import { markEngaged } from "@/lib/engagement";
 import { errorMessage } from "@/lib/errors";
 import { seatsLabel, t } from "@/lib/i18n";
 import { ammanToday, ammanWallClockToMs, fmtDayTime } from "@/lib/time";
+import { dateSchema, priceSchema, timeSchema } from "@/lib/validators";
 import { cn } from "@/lib/utils";
 
 type CreateResult = FunctionReturnType<typeof api.trips.createTrip>;
@@ -153,13 +153,7 @@ function NewTripForm({ onPosted }: { onPosted: (trip: PostedTrip) => void }) {
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <form.Field
-                name="date"
-                validators={{
-                  onSubmit: ({ value }) =>
-                    value === "" ? t("error_date_required") : undefined,
-                }}
-              >
+              <form.Field name="date" validators={{ onSubmit: dateSchema }}>
                 {(field) => (
                   <div className="flex flex-col gap-1.5">
                     <Label htmlFor={field.name}>{t("date")}</Label>
@@ -179,13 +173,7 @@ function NewTripForm({ onPosted }: { onPosted: (trip: PostedTrip) => void }) {
                   </div>
                 )}
               </form.Field>
-              <form.Field
-                name="time"
-                validators={{
-                  onSubmit: ({ value }) =>
-                    value === "" ? t("error_time_required") : undefined,
-                }}
-              >
+              <form.Field name="time" validators={{ onSubmit: timeSchema }}>
                 {(field) => (
                   <div className="flex flex-col gap-1.5">
                     <Label htmlFor={field.name}>{t("time")}</Label>
@@ -226,15 +214,7 @@ function NewTripForm({ onPosted }: { onPosted: (trip: PostedTrip) => void }) {
                   </div>
                 )}
               </form.Field>
-              <form.Field
-                name="price"
-                validators={{
-                  onSubmit: ({ value }) =>
-                    value.trim() === "" || !isValidPrice(Number(value))
-                      ? t("error_invalid_price")
-                      : undefined,
-                }}
-              >
+              <form.Field name="price" validators={{ onSubmit: priceSchema }}>
                 {(field) => (
                   <div className="flex flex-col gap-1.5">
                     <Label htmlFor={field.name}>{t("price_per_seat")}</Label>
@@ -368,11 +348,7 @@ function NewTripForm({ onPosted }: { onPosted: (trip: PostedTrip) => void }) {
               )}
             </form.Field>
 
-            {submitError !== null && (
-              <p role="alert" className="text-sm text-destructive">
-                {submitError}
-              </p>
-            )}
+            <FormError message={submitError} />
 
             <form.Subscribe selector={(state) => state.isSubmitting}>
               {(isSubmitting) => (
@@ -410,9 +386,7 @@ function PostSuccess({ trip }: { trip: PostedTrip }) {
             <span className="font-heading text-lg font-semibold">
               {trip.price} {t("jod")}
             </span>
-            <Badge className="bg-plate text-plate-foreground">
-              {seatsLabel(trip.seats)}
-            </Badge>
+            <Badge variant="plate">{seatsLabel(trip.seats)}</Badge>
           </div>
         </CardContent>
       </Card>

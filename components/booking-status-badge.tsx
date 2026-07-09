@@ -27,12 +27,7 @@ const VARIANT = {
 /** Booking lifecycle badge; pending gets the amber plate look. Server-safe. */
 export function BookingStatusBadge({ status }: { status: BookingStatus }) {
   return (
-    <Badge
-      variant={VARIANT[status]}
-      className={
-        status === "pending" ? "bg-plate text-plate-foreground" : undefined
-      }
-    >
+    <Badge variant={status === "pending" ? "plate" : VARIANT[status]}>
       {t(LABEL[status])}
     </Badge>
   );

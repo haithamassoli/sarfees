@@ -99,9 +99,7 @@ export default async function TripPage({ params }: PageProps<"/trips/[id]">) {
               <span className="text-sm text-muted-foreground">
                 {t("seats_available")}
               </span>
-              <Badge className="bg-plate text-plate-foreground">
-                {seatsLabel(trip.seatsAvailable)}
-              </Badge>
+              <Badge variant="plate">{seatsLabel(trip.seatsAvailable)}</Badge>
             </div>
           </div>
           {/* Live island: seat stepper / booking status / driver contact. */}

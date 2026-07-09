@@ -8,7 +8,7 @@ import { useForm } from "@tanstack/react-form";
 import type { FunctionReturnType } from "convex/server";
 import { CircleCheck, LogOut } from "lucide-react";
 import { api } from "@/convex/_generated/api";
-import { FieldError } from "@/components/field-error";
+import { FieldError, FormError } from "@/components/field-error";
 import { StarsRow } from "@/components/rate-control";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,6 +19,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { errorMessage } from "@/lib/errors";
 import { t } from "@/lib/i18n";
 import { fmtDay } from "@/lib/time";
+import { nameSchema } from "@/lib/validators";
 
 type Viewer = NonNullable<FunctionReturnType<typeof api.users.viewer>>;
 
@@ -173,17 +174,7 @@ function ProfileForm({ viewer }: { viewer: Viewer }) {
             void form.handleSubmit();
           }}
         >
-          <form.Field
-            name="name"
-            validators={{
-              onSubmit: ({ value }) => {
-                const len = value.trim().length;
-                return len >= 2 && len <= 60
-                  ? undefined
-                  : t("error_invalid_name");
-              },
-            }}
-          >
+          <form.Field name="name" validators={{ onSubmit: nameSchema }}>
             {(field) => (
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor={field.name}>{t("name")}</Label>
@@ -259,11 +250,7 @@ function ProfileForm({ viewer }: { viewer: Viewer }) {
 
           <p className="text-xs text-muted-foreground">{t("vehicle_hint")}</p>
 
-          {submitError !== null && (
-            <p role="alert" className="text-sm text-destructive">
-              {submitError}
-            </p>
-          )}
+          <FormError message={submitError} />
 
           <div className="flex items-center gap-3">
             <form.Subscribe selector={(state) => state.isSubmitting}>

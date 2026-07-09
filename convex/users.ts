@@ -1,6 +1,7 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { isValidName } from "./lib/text";
 
 const vehicleValidator = v.object({
   make: v.string(),
@@ -53,7 +54,7 @@ export const updateProfile = mutation({
     if (userId === null) throw new ConvexError("not_signed_in");
 
     const name = args.name.trim();
-    if (name.length < 2 || name.length > 60) {
+    if (!isValidName(name)) {
       throw new ConvexError("invalid_name");
     }
 

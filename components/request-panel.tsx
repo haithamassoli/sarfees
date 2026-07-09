@@ -5,7 +5,8 @@ import { useState } from "react";
 import { useConvexAuth, useMutation, useQuery } from "convex/react";
 import { toast } from "sonner";
 import { CircleCheck } from "lucide-react";
-import { ConfirmCancelDialog } from "@/components/confirm-cancel-dialog";
+import { FormError } from "@/components/field-error";
+import { CancelRequestButton } from "@/components/cancel-request-button";
 import { ContactCard } from "@/components/contact-card";
 import { RequestStatusBadge } from "@/components/request-status-badge";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -41,7 +42,6 @@ import { cn } from "@/lib/utils";
 export function RequestPanel({ requestId }: { requestId: Id<"rideRequests"> }) {
   const { isLoading: authLoading, isAuthenticated } = useConvexAuth();
   const request = useQuery(api.requests.get, { id: requestId });
-  const cancelRequest = useMutation(api.requests.cancelRequest);
 
   if (authLoading || request === undefined) {
     return (
@@ -74,13 +74,7 @@ export function RequestPanel({ requestId }: { requestId: Id<"rideRequests"> }) {
           )}
           {request.status === "open" && (
             <div className="flex justify-end">
-              <ConfirmCancelDialog
-                triggerLabel={t("cancel_request")}
-                title={t("cancel_request_title")}
-                body={t("cancel_request_body")}
-                confirmLabel={t("confirm_cancel_request")}
-                onConfirm={() => cancelRequest({ id: request._id })}
-              />
+              <CancelRequestButton requestId={request._id} />
             </div>
           )}
         </div>
@@ -243,11 +237,7 @@ function AcceptRequestDialog({
               />
             </div>
           </div>
-          {error !== null && (
-            <p role="alert" className="text-sm text-destructive">
-              {error}
-            </p>
-          )}
+          <FormError message={error} />
         </div>
         <DialogFooter>
           <DialogClose render={<Button variant="outline" />}>

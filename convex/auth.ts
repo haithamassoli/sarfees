@@ -3,6 +3,7 @@ import { convexAuth } from "@convex-dev/auth/server";
 import { ConvexError } from "convex/values";
 import type { DataModel } from "./_generated/dataModel";
 import { normalizeJordanPhone } from "./lib/shared";
+import { isValidName } from "./lib/text";
 
 // Phone + password. The client submits the phone number in the `email` param
 // (the Password provider's account key); we normalize it to E.164 so every
@@ -14,7 +15,7 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
         const phone = normalizeJordanPhone(String(params.email ?? ""));
         if (!phone) throw new ConvexError("invalid_phone");
         const name = String(params.name ?? "").trim();
-        if (params.flow === "signUp" && (name.length < 2 || name.length > 60)) {
+        if (params.flow === "signUp" && !isValidName(name)) {
           throw new ConvexError("invalid_name");
         }
         return {

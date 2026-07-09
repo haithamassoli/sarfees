@@ -27,9 +27,7 @@ export function RequestCard({ request }: { request: RequestCardRequest }) {
         <CardContent className="flex flex-col gap-2.5">
           <div className="flex items-center justify-between gap-2">
             <RouteSign from={request.originGov} to={request.destGov} size="sm" />
-            <Badge className="bg-plate text-plate-foreground">
-              {seatsLabel(request.seats)}
-            </Badge>
+            <Badge variant="plate">{seatsLabel(request.seats)}</Badge>
           </div>
           <div className="flex items-center justify-between gap-2 text-sm">
             <span className="text-muted-foreground">

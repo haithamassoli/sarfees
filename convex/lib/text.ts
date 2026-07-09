@@ -11,6 +11,13 @@ export function cleanText(value: string | undefined): string | undefined {
   return trimmed;
 }
 
+/** Display name: 2..60 chars after trim (docs/PRD.md). One source for the
+ * signup, profile, and client-form checks so they can't drift. */
+export function isValidName(name: string): boolean {
+  const len = name.trim().length;
+  return len >= 2 && len <= 60;
+}
+
 /** JOD in quarter-dinar steps, 0..999 (docs/PRD.md non-functional). */
 export function isValidPrice(price: number): boolean {
   return (

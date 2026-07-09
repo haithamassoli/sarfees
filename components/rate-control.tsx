@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useMutation } from "convex/react";
 import { toast } from "sonner";
 import { Star } from "lucide-react";
+import { FormError } from "@/components/field-error";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -152,11 +153,7 @@ export function RateControl({
             />
           </div>
 
-          {error !== null && (
-            <p role="alert" className="text-sm text-destructive">
-              {error}
-            </p>
-          )}
+          <FormError message={error} />
         </div>
 
         <DialogFooter>

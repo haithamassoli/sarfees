@@ -1,0 +1,206 @@
+/*
+ * Serfees marketing landing — "the road, in daylight and at night."
+ * Full-bleed, Arabic-first RTL. Reuses the app's global tokens
+ * (app/globals.css): --sign / --plate / --primary / --background …, so
+ * light + dark come from one source of truth. Local helpers derive from them.
+ */
+.page {
+  --gantry-deep: color-mix(in oklab, var(--sign) 82%, black);
+  --sh: 150 22% 16%;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-plex-arabic), system-ui, sans-serif;
+  line-height: 1.75;
+  font-size: 1.02rem;
+  overflow-x: hidden;
+}
+@media (prefers-color-scheme: dark) {
+  .page { --sh: 0 0% 0%; --gantry-deep: color-mix(in oklab, var(--sign) 68%, black); }
+}
+.page :is(h1, h2, h3) { font-family: var(--font-kufi), system-ui, sans-serif; line-height: 1.35; margin: 0; font-weight: 700; }
+.page :where(a, button):focus-visible { outline: 3px solid var(--primary); outline-offset: 3px; border-radius: 6px; }
+.mono { font-family: var(--font-geist-mono), ui-monospace, monospace; font-feature-settings: "tnum"; }
+
+/* Layout */
+.wrap { width: min(1140px, 100% - 2.5rem); margin-inline: auto; }
+.section { padding-block: clamp(3.5rem, 9vw, 7rem); }
+.alt { background: var(--muted); }
+.eyebrow {
+  display: inline-flex; align-items: center; gap: .55rem;
+  font-size: .8rem; font-weight: 600; letter-spacing: .02em;
+  color: var(--primary); margin: 0 0 1.1rem;
+}
+.eyebrow::before { content: ""; width: 26px; height: 2px; background: currentColor; border-radius: 2px; opacity: .7; }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  font-family: var(--font-kufi), sans-serif; font-weight: 600; font-size: .98rem;
+  padding: .78rem 1.5rem; border-radius: 999px; border: 1.5px solid transparent;
+  cursor: pointer; transition: transform .15s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease, color .2s ease;
+  white-space: nowrap;
+}
+.btnPrimary { background: var(--primary); color: var(--primary-foreground); box-shadow: 0 6px 18px -8px hsl(var(--sh) / .55); }
+.btnPrimary:hover { transform: translateY(-2px); box-shadow: 0 12px 26px -10px hsl(var(--sh) / .6); }
+.btnGhost { background: transparent; color: var(--foreground); border-color: var(--border); }
+.btnGhost:hover { transform: translateY(-2px); border-color: var(--primary); color: var(--primary); }
+.btnArrow { font-size: 1.1em; line-height: 0; }
+
+/* Nav */
+.nav { position: sticky; top: 0; z-index: 40; background: color-mix(in oklab, var(--background) 82%, transparent); backdrop-filter: saturate(1.4) blur(10px); border-bottom: 1px solid var(--border); }
+.navIn { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+.brand { display: inline-flex; align-items: center; gap: .6rem; font-family: var(--font-kufi); font-weight: 700; font-size: 1.25rem; color: var(--foreground); }
+.brand svg { width: 32px; height: 32px; border-radius: 9px; }
+.navLinks { display: flex; align-items: center; gap: 1.6rem; }
+.navLink { font-weight: 500; font-size: .95rem; color: var(--muted-foreground); }
+.navLink:hover { color: var(--foreground); }
+@media (max-width: 720px) { .navLink { display: none; } }
+
+/* Hero */
+.hero { padding-block: clamp(2.5rem, 6vw, 5rem) clamp(3rem, 7vw, 5.5rem); }
+.heroGrid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 5vw, 4.5rem); align-items: center; }
+@media (max-width: 900px) { .heroGrid { grid-template-columns: 1fr; gap: 2.75rem; } }
+.hero h1 { font-size: clamp(1.9rem, 4.4vw, 2.95rem); font-weight: 700; letter-spacing: -.015em; line-height: 1.28; }
+.l2 { display: block; color: var(--primary); margin-top: .3rem; }
+.sub { margin-top: 1.4rem; font-size: clamp(1.02rem, 1.6vw, 1.16rem); color: var(--muted-foreground); max-width: 34ch; }
+.actions { margin-top: 2rem; display: flex; gap: .85rem; flex-wrap: wrap; }
+.statline { margin-top: 1.6rem; display: flex; gap: 1.4rem; flex-wrap: wrap; font-size: .92rem; color: var(--muted-foreground); }
+.statline b { font-family: var(--font-kufi); font-weight: 700; color: var(--foreground); }
+.statDot { color: var(--plate); }
+
+/* THE SIGNATURE: gantry route sign */
+.gantry { display: flex; justify-content: center; }
+.gantrySign {
+  position: relative; width: min(450px, 100%);
+  background: linear-gradient(180deg, var(--sign) 0%, var(--gantry-deep) 100%);
+  border-radius: 18px; padding: 1.5rem 1.5rem 1.4rem;
+  box-shadow:
+    inset 0 0 0 3px var(--gantry-deep),
+    inset 0 0 0 5px color-mix(in oklab, var(--sign-foreground) 78%, transparent),
+    0 26px 50px -22px hsl(var(--sh) / .7),
+    0 6px 14px -8px hsl(var(--sh) / .5);
+}
+.gantrySign::before {
+  content: ""; position: absolute; inset-inline: 22%; top: -13px; height: 9px;
+  background: var(--gantry-deep); border-radius: 4px 4px 0 0; opacity: .9;
+}
+.signFace { color: var(--sign-foreground); font-family: var(--font-kufi); }
+.route { display: flex; align-items: center; gap: .5rem; }
+.gov { font-size: clamp(1.5rem, 4.5vw, 1.95rem); font-weight: 700; white-space: nowrap; }
+.road { position: relative; flex: 1; height: 22px; }
+.road::before {
+  content: ""; position: absolute; inset-inline: 14px 4px; top: 50%; height: 0;
+  border-top: 2.5px dashed color-mix(in oklab, var(--sign-foreground) 65%, transparent);
+}
+.roadArrow { position: absolute; left: 0; top: 50%; transform: translateY(-50%); }
+.roadArrow svg { display: block; width: 15px; height: 15px; fill: var(--sign-foreground); }
+.signSub { margin-top: .5rem; font-family: var(--font-plex-arabic); font-weight: 500; font-size: .82rem; color: color-mix(in oklab, var(--sign-foreground) 72%, transparent); }
+.bolt { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: color-mix(in oklab, var(--sign-foreground) 40%, var(--gantry-deep)); }
+.tl { top: 11px; inset-inline-start: 11px; } .tr { top: 11px; inset-inline-end: 11px; }
+.bl { bottom: 11px; inset-inline-start: 11px; } .br { bottom: 11px; inset-inline-end: 11px; }
+.plate {
+  position: absolute; inset-inline-end: 20px; bottom: -22px;
+  display: inline-flex; align-items: baseline; gap: .45rem;
+  background: var(--plate); color: var(--plate-foreground);
+  padding: .5rem .95rem; border-radius: 10px; font-weight: 600;
+  box-shadow: 0 10px 22px -12px hsl(var(--sh) / .7), inset 0 0 0 2px color-mix(in oklab, var(--plate-foreground) 18%, transparent);
+}
+.num { font-family: var(--font-geist-mono), monospace; font-size: 1.35rem; font-weight: 600; font-feature-settings: "tnum"; letter-spacing: -.01em; }
+.unit { font-family: var(--font-plex-arabic); font-size: .78rem; font-weight: 600; }
+.flip { transition: opacity .26s ease, transform .26s ease; }
+.flipping .flip { opacity: 0; transform: translateY(-9px); }
+
+/* Lane divider */
+.lane { height: 2px; border: 0; margin: 0; background: repeating-linear-gradient(to left, var(--border) 0 24px, transparent 24px 44px); }
+
+/* Problem: before / after */
+.twoCol { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-top: 2.4rem; }
+@media (max-width: 720px) { .twoCol { grid-template-columns: 1fr; } }
+.panel { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.6rem 1.7rem; }
+.panel h3 { font-size: 1.12rem; margin-bottom: .5rem; }
+.tag { display: inline-block; font-family: var(--font-kufi); font-weight: 600; font-size: .8rem; padding: .2rem .7rem; border-radius: 999px; margin-bottom: .85rem; }
+.before .tag { background: var(--muted); color: var(--muted-foreground); }
+.before p { color: var(--muted-foreground); }
+.after { border-color: color-mix(in oklab, var(--primary) 45%, var(--border)); box-shadow: 0 18px 40px -26px hsl(var(--sh) / .5); }
+.after .tag { background: color-mix(in oklab, var(--primary) 16%, transparent); color: var(--primary); }
+
+.sectionHead { max-width: 40ch; }
+.sectionHead h2 { font-size: clamp(1.65rem, 3.6vw, 2.4rem); font-weight: 700; }
+.sectionHead p { margin-top: .9rem; color: var(--muted-foreground); }
+
+/* How it works — ordered route markers */
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.1rem; margin-top: 2.6rem; }
+@media (max-width: 860px) { .steps { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 500px) { .steps { grid-template-columns: 1fr; } }
+.step { padding-top: .4rem; }
+.step h3 { font-size: 1.06rem; margin-bottom: .4rem; }
+.step p { font-size: .93rem; color: var(--muted-foreground); }
+.marker {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 42px; height: 42px; border-radius: 10px; margin-bottom: 1rem;
+  background: linear-gradient(180deg, var(--sign), var(--gantry-deep));
+  color: var(--sign-foreground); font-family: var(--font-kufi); font-weight: 700; font-size: 1.15rem;
+  box-shadow: inset 0 0 0 2px color-mix(in oklab, var(--sign-foreground) 55%, transparent);
+}
+
+/* The match */
+.matchGrid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 5vw, 4rem); align-items: center; }
+@media (max-width: 820px) { .matchGrid { grid-template-columns: 1fr; } }
+.matchViz { display: flex; flex-direction: column; gap: .9rem; }
+.miniSign {
+  display: flex; align-items: center; gap: .55rem; align-self: flex-start;
+  background: linear-gradient(180deg, var(--sign), var(--gantry-deep)); color: var(--sign-foreground);
+  font-family: var(--font-kufi); font-weight: 700; font-size: 1.05rem;
+  padding: .6rem 1rem; border-radius: 11px;
+  box-shadow: inset 0 0 0 2px color-mix(in oklab, var(--sign-foreground) 55%, transparent);
+}
+.miniSign svg { fill: var(--sign-foreground); width: 13px; height: 13px; }
+.who { font-family: var(--font-plex-arabic); font-weight: 600; font-size: .74rem; padding: .12rem .5rem; border-radius: 999px; background: color-mix(in oklab, var(--sign-foreground) 20%, transparent); }
+.matchWindow {
+  align-self: center; display: inline-flex; align-items: center; gap: .5rem;
+  font-size: .86rem; color: var(--muted-foreground); font-weight: 500;
+  padding: .35rem .9rem; border: 1px dashed color-mix(in oklab, var(--primary) 55%, var(--border)); border-radius: 999px;
+}
+.ping { width: 9px; height: 9px; border-radius: 50%; background: var(--plate); animation: ping 2.4s ease-out infinite; }
+@keyframes ping { 0% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--plate) 60%, transparent); } 70%, 100% { box-shadow: 0 0 0 12px transparent; } }
+
+/* Routes network — quiet link-cards */
+.routesGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: .8rem; margin-top: 2.4rem; }
+.routeChip {
+  display: flex; align-items: center; gap: .5rem; justify-content: center;
+  background: var(--card); color: var(--foreground);
+  border: 1px solid var(--border); border-inline-start: 3px solid var(--primary);
+  font-family: var(--font-kufi); font-weight: 700; font-size: 1rem;
+  padding: .85rem 1rem; border-radius: 10px;
+  transition: transform .16s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease, color .2s ease;
+}
+.routeChip:hover { transform: translateY(-3px); background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); box-shadow: 0 14px 26px -16px hsl(var(--sh) / .55); }
+.routeChip svg { fill: var(--primary); width: 13px; height: 13px; flex: none; }
+.routeChip:hover svg { fill: var(--primary-foreground); }
+
+/* Install / trust band */
+.band { background: linear-gradient(160deg, var(--sign) 0%, var(--gantry-deep) 100%); color: var(--sign-foreground); border-radius: 24px; padding: clamp(2.2rem, 5vw, 3.4rem); position: relative; overflow: hidden; }
+.band::after { content: ""; position: absolute; inset-inline-start: -10%; top: 50%; width: 60%; height: 2.5px; background: repeating-linear-gradient(to left, color-mix(in oklab, var(--sign-foreground) 55%, transparent) 0 20px, transparent 20px 40px); opacity: .4; }
+.band h2 { font-size: clamp(1.6rem, 3.6vw, 2.3rem); position: relative; }
+.band p { margin-top: .9rem; max-width: 46ch; color: color-mix(in oklab, var(--sign-foreground) 82%, transparent); position: relative; }
+.chips { margin-top: 1.8rem; display: flex; flex-wrap: wrap; gap: .6rem; position: relative; }
+.chip { display: inline-flex; align-items: center; gap: .45rem; font-size: .88rem; font-weight: 500; background: color-mix(in oklab, var(--sign-foreground) 14%, transparent); padding: .5rem .95rem; border-radius: 999px; border: 1px solid color-mix(in oklab, var(--sign-foreground) 22%, transparent); }
+.amber { width: 7px; height: 7px; border-radius: 50%; background: var(--plate); }
+
+/* Closing */
+.closing { text-align: center; }
+.closing h2 { font-family: var(--font-kufi); font-weight: 700; font-size: clamp(2.6rem, 8vw, 5rem); letter-spacing: -.02em; }
+.closing .sub { margin-top: .6rem; margin-inline: auto; color: var(--muted-foreground); max-width: none; }
+.closing .actions { margin-top: 2rem; justify-content: center; }
+
+/* Footer */
+.foot { border-top: 1px solid var(--border); padding-block: 2.4rem; }
+.footIn { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; color: var(--muted-foreground); font-size: .88rem; }
+.foot .brand { font-size: 1.05rem; }
+.foot .brand svg { width: 26px; height: 26px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .page * { animation: none !important; }
+  .btn:hover, .routeChip:hover { transform: none; }
+  .flip, .flipping .flip { transition: none; }
+}

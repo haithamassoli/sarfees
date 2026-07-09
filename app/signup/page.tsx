@@ -5,14 +5,14 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useForm } from "@tanstack/react-form";
-import { FieldError } from "@/components/field-error";
+import { FormError } from "@/components/field-error";
+import { TextField } from "@/components/text-field";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { normalizeJordanPhone } from "@/convex/lib/shared";
 import { errorMessage } from "@/lib/errors";
 import { t } from "@/lib/i18n";
+import { nameSchema, passwordSchema, phoneSchema } from "@/lib/validators";
 
 export default function SignupPage() {
   const { signIn } = useAuthActions();
@@ -62,97 +62,48 @@ export default function SignupPage() {
               void form.handleSubmit();
             }}
           >
-            <form.Field
-              name="name"
-              validators={{
-                onSubmit: ({ value }) => {
-                  const len = value.trim().length;
-                  return len >= 2 && len <= 60
-                    ? undefined
-                    : t("error_invalid_name");
-                },
-              }}
-            >
+            <form.Field name="name" validators={{ onSubmit: nameSchema }}>
               {(field) => (
-                <div className="flex flex-col gap-1.5">
-                  <Label htmlFor={field.name}>{t("name")}</Label>
-                  <Input
-                    id={field.name}
-                    name={field.name}
-                    autoComplete="name"
-                    maxLength={60}
-                    placeholder={t("name_placeholder")}
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    onBlur={field.handleBlur}
-                    aria-invalid={field.state.meta.errors.length > 0 || undefined}
-                  />
-                  <FieldError errors={field.state.meta.errors} />
-                </div>
+                <TextField
+                  field={field}
+                  label={t("name")}
+                  autoComplete="name"
+                  maxLength={60}
+                  placeholder={t("name_placeholder")}
+                />
               )}
             </form.Field>
 
-            <form.Field
-              name="phone"
-              validators={{
-                onSubmit: ({ value }) =>
-                  normalizeJordanPhone(value) === null
-                    ? t("error_invalid_phone")
-                    : undefined,
-              }}
-            >
+            <form.Field name="phone" validators={{ onSubmit: phoneSchema }}>
               {(field) => (
-                <div className="flex flex-col gap-1.5">
-                  <Label htmlFor={field.name}>{t("phone")}</Label>
-                  <Input
-                    id={field.name}
-                    name={field.name}
-                    type="tel"
-                    dir="ltr"
-                    inputMode="tel"
-                    autoComplete="tel"
-                    placeholder={t("phone_placeholder")}
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    onBlur={field.handleBlur}
-                    aria-invalid={field.state.meta.errors.length > 0 || undefined}
-                  />
-                  <FieldError errors={field.state.meta.errors} />
-                </div>
+                <TextField
+                  field={field}
+                  label={t("phone")}
+                  type="tel"
+                  dir="ltr"
+                  inputMode="tel"
+                  autoComplete="tel"
+                  placeholder={t("phone_placeholder")}
+                />
               )}
             </form.Field>
 
             <form.Field
               name="password"
-              validators={{
-                onSubmit: ({ value }) =>
-                  value.length >= 8 ? undefined : t("error_weak_password"),
-              }}
+              validators={{ onSubmit: passwordSchema }}
             >
               {(field) => (
-                <div className="flex flex-col gap-1.5">
-                  <Label htmlFor={field.name}>{t("password")}</Label>
-                  <Input
-                    id={field.name}
-                    name={field.name}
-                    type="password"
-                    dir="ltr"
-                    autoComplete="new-password"
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    onBlur={field.handleBlur}
-                    aria-invalid={field.state.meta.errors.length > 0 || undefined}
-                  />
-                  <FieldError errors={field.state.meta.errors} />
-                </div>
+                <TextField
+                  field={field}
+                  label={t("password")}
+                  type="password"
+                  dir="ltr"
+                  autoComplete="new-password"
+                />
               )}
             </form.Field>
 
-            {submitError !== null && (
-              <p role="alert" className="text-sm text-destructive">
-                {submitError}
-              </p>
-            )}
+            <FormError message={submitError} />
 
             <form.Subscribe selector={(state) => state.isSubmitting}>
               {(isSubmitting) => (

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { FormError } from "@/components/field-error";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -53,11 +54,7 @@ export function ConfirmCancelDialog({
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{body}</DialogDescription>
         </DialogHeader>
-        {error !== null && (
-          <p role="alert" className="text-sm text-destructive">
-            {error}
-          </p>
-        )}
+        <FormError message={error} />
         <DialogFooter>
           <DialogClose render={<Button variant="outline" />}>
             {t("back")}

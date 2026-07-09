@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { CirclePlus, Flag, Hand, Search } from "lucide-react";
 import { BookingStatusBadge } from "@/components/booking-status-badge";
 import { CancelBookingButton } from "@/components/cancel-booking-button";
+import { CancelRequestButton } from "@/components/cancel-request-button";
 import { ConfirmCancelDialog } from "@/components/confirm-cancel-dialog";
 import { ContactCard } from "@/components/contact-card";
 import { PushToggle } from "@/components/push-toggle";
@@ -200,7 +201,6 @@ function MyBookingCard({
 
 /** Passenger's ride request: status, matched driver contact, cancel. */
 function MyRequestCard({ request }: { request: MyRequest }) {
-  const cancelRequest = useMutation(api.requests.cancelRequest);
   return (
     <Card size="sm">
       <CardContent className="flex flex-col gap-2.5">
@@ -238,13 +238,7 @@ function MyRequestCard({ request }: { request: MyRequest }) {
         )}
         {request.status === "open" && (
           <div className="flex justify-end">
-            <ConfirmCancelDialog
-              triggerLabel={t("cancel_request")}
-              title={t("cancel_request_title")}
-              body={t("cancel_request_body")}
-              confirmLabel={t("confirm_cancel_request")}
-              onConfirm={() => cancelRequest({ id: request._id })}
-            />
+            <CancelRequestButton requestId={request._id} />
           </div>
         )}
       </CardContent>

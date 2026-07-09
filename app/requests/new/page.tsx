@@ -6,7 +6,7 @@ import { useMutation } from "convex/react";
 import type { FunctionReturnType } from "convex/server";
 import { useForm } from "@tanstack/react-form";
 import { BellRing, CircleCheck } from "lucide-react";
-import { FieldError } from "@/components/field-error";
+import { FieldError, FormError } from "@/components/field-error";
 import { GovSelect } from "@/components/gov-select";
 import { PushToggle } from "@/components/push-toggle";
 import { RouteSign } from "@/components/route-sign";
@@ -24,6 +24,7 @@ import { markEngaged } from "@/lib/engagement";
 import { errorMessage } from "@/lib/errors";
 import { seatsLabel, t } from "@/lib/i18n";
 import { ammanToday, ammanWallClockToMs, fmtDayTime } from "@/lib/time";
+import { dateSchema, timeSchema } from "@/lib/validators";
 import { cn } from "@/lib/utils";
 
 type CreateResult = FunctionReturnType<typeof api.requests.createRequest>;
@@ -144,13 +145,7 @@ function NewRequestForm({
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <form.Field
-                name="date"
-                validators={{
-                  onSubmit: ({ value }) =>
-                    value === "" ? t("error_date_required") : undefined,
-                }}
-              >
+              <form.Field name="date" validators={{ onSubmit: dateSchema }}>
                 {(field) => (
                   <div className="flex flex-col gap-1.5">
                     <Label htmlFor={field.name}>{t("date")}</Label>
@@ -170,13 +165,7 @@ function NewRequestForm({
                   </div>
                 )}
               </form.Field>
-              <form.Field
-                name="time"
-                validators={{
-                  onSubmit: ({ value }) =>
-                    value === "" ? t("error_time_required") : undefined,
-                }}
-              >
+              <form.Field name="time" validators={{ onSubmit: timeSchema }}>
                 {(field) => (
                   <div className="flex flex-col gap-1.5">
                     <Label htmlFor={field.name}>{t("time")}</Label>
@@ -267,11 +256,7 @@ function NewRequestForm({
               )}
             </form.Field>
 
-            {submitError !== null && (
-              <p role="alert" className="text-sm text-destructive">
-                {submitError}
-              </p>
-            )}
+            <FormError message={submitError} />
 
             <form.Subscribe selector={(state) => state.isSubmitting}>
               {(isSubmitting) => (
@@ -305,9 +290,7 @@ function PostSuccess({ request }: { request: PostedRequest }) {
           <p className="text-sm text-muted-foreground">
             {fmtDayTime(request.desiredAt)}
           </p>
-          <Badge className="bg-plate text-plate-foreground">
-            {seatsLabel(request.seats)}
-          </Badge>
+          <Badge variant="plate">{seatsLabel(request.seats)}</Badge>
         </CardContent>
       </Card>
 

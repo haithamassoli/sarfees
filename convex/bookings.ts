@@ -3,12 +3,12 @@ import { ConvexError, v } from "convex/values";
 import { mutation, query, type MutationCtx } from "./_generated/server";
 import type { Doc } from "./_generated/dataModel";
 import {
-  counterpartUser,
   counterpartUserValidator,
-  publicUser,
+  isRevealingStatus,
   publicUserValidator,
+  revealUser,
 } from "./lib/privacy";
-import { MAX_REVEALS_PER_HOUR, REVEAL_WINDOW_MS } from "./lib/shared";
+import { isRevealRateLimited, MAX_REVEALS_PER_HOUR } from "./lib/shared";
 import {
   bookingStatusValidator,
   govValidator,
@@ -119,10 +119,7 @@ export const book = mutation({
       .withIndex("by_passenger", (q) => q.eq("passengerId", userId))
       .order("desc")
       .take(MAX_REVEALS_PER_HOUR);
-    if (
-      recent.length >= MAX_REVEALS_PER_HOUR &&
-      recent[recent.length - 1]._creationTime > Date.now() - REVEAL_WINDOW_MS
-    ) {
+    if (isRevealRateLimited(recent, Date.now())) {
       throw new ConvexError("too_many_attempts");
     }
 
@@ -327,8 +324,6 @@ export const myBookings = query({
         if (trip === null) return null; // trips are never deleted in MVP
         const driver = await ctx.db.get("users", trip.driverId);
         if (driver === null) return null;
-        const entitled =
-          booking.status === "confirmed" || booking.status === "completed";
         return {
           _id: booking._id,
           seats: booking.seats,
@@ -341,7 +336,7 @@ export const myBookings = query({
             pricePerSeat: trip.pricePerSeat,
             status: trip.status,
           },
-          driver: entitled ? counterpartUser(driver) : publicUser(driver),
+          driver: revealUser(driver, isRevealingStatus(booking.status)),
         };
       }),
     );
@@ -378,15 +373,11 @@ export const forMyTrip = query({
       bookings.map(async (booking) => {
         const passenger = await ctx.db.get("users", booking.passengerId);
         if (passenger === null) return null;
-        const entitled =
-          booking.status === "confirmed" || booking.status === "completed";
         return {
           _id: booking._id,
           seats: booking.seats,
           status: booking.status,
-          passenger: entitled
-            ? counterpartUser(passenger)
-            : publicUser(passenger),
+          passenger: revealUser(passenger, isRevealingStatus(booking.status)),
         };
       }),
     );

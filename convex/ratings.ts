@@ -2,7 +2,6 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
-import { publicUser } from "./lib/privacy";
 import { notify } from "./notifications";
 
 const MAX_COMMENT_CHARS = 300;
@@ -50,11 +49,11 @@ export const rate = mutation({
       throw new ConvexError("not_your_booking");
     }
 
-    // by_booking holds at most 2 rows (one per direction), so collect is bounded.
+    // by_booking holds at most 2 rows (one per direction) — take(2) is the whole set.
     const existing = await ctx.db
       .query("ratings")
       .withIndex("by_booking", (q) => q.eq("bookingId", booking._id))
-      .collect();
+      .take(2);
     if (existing.some((rating) => rating.raterId === userId)) {
       throw new ConvexError("already_rated");
     }
@@ -101,7 +100,7 @@ export const myRatingsForBookings = query({
       const rows = await ctx.db
         .query("ratings")
         .withIndex("by_booking", (q) => q.eq("bookingId", bookingId))
-        .collect(); // max 2 rows per booking
+        .take(2); // by_booking holds at most 2 rows per booking
       const mine = rows.find((rating) => rating.raterId === userId);
       if (mine !== undefined) stars[bookingId] = mine.stars;
     }
@@ -133,12 +132,12 @@ export const forUser = query({
     return await Promise.all(
       rows.map(async (rating) => {
         const rater = await ctx.db.get("users", rating.raterId);
-        // First-name-only subset of PublicUser — every user join goes
-        // through the privacy helper (convex/lib/privacy.ts).
+        // Public trust data: first name only. `name` is not privacy-gated
+        // (it's in every user payload), so no privacy helper is needed here.
         const raterName =
           rater === null
             ? ""
-            : (publicUser(rater).name.trim().split(/\s+/)[0] ?? "");
+            : (rater.name.trim().split(/\s+/)[0] ?? "");
         return {
           _id: rating._id,
           _creationTime: rating._creationTime,
