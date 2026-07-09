@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { normalizeJordanPhone } from "@/convex/lib/shared";
-import { isValidPrice } from "@/convex/lib/text";
+import { isValidName, isValidPrice } from "@/convex/lib/text";
 import { t } from "@/lib/i18n";
 
 // Zod field schemas for the app's TanStack Forms. TanStack consumes each as a
@@ -8,10 +8,9 @@ import { t } from "@/lib/i18n";
 // Cross-field rules (from ≠ to, future departure, all-or-nothing vehicle) stay
 // in each form's onSubmit — they're relational/temporal, not field shapes.
 
-export const nameSchema = z.string().refine((v) => {
-  const len = v.trim().length;
-  return len >= 2 && len <= 60;
-}, t("error_invalid_name"));
+export const nameSchema = z
+  .string()
+  .refine(isValidName, t("error_invalid_name"));
 
 export const phoneSchema = z
   .string()

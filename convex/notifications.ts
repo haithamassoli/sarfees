@@ -25,7 +25,7 @@ const PUSH_TYPES: ReadonlySet<Doc<"notifications">["type"]> = new Set([
 
 /**
  * Insert an in-app notification row and, for match/booking types, schedule the
- * web-push send (stub until M5). Call from mutations only.
+ * web-push send. Call from mutations only.
  */
 export async function notify(
   ctx: MutationCtx,

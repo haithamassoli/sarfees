@@ -36,9 +36,7 @@ export function TripCard({ trip }: { trip: TripCardTrip }) {
             <span className="text-muted-foreground">
               {fmtDayTime(trip.departAt)}
             </span>
-            <Badge className="bg-plate text-plate-foreground">
-              {seatsLabel(trip.seatsAvailable)}
-            </Badge>
+            <Badge variant="plate">{seatsLabel(trip.seatsAvailable)}</Badge>
           </div>
           <div className="flex items-center gap-2 text-sm">
             <span className="font-medium">{trip.driver.name}</span>

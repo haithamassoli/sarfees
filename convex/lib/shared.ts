@@ -71,6 +71,22 @@ export const MAX_REVEALS_PER_HOUR = 10;
 export const REVEAL_WINDOW_MS = 60 * 60 * 1000;
 
 /**
+ * Sliding-hour anti-scrape guard. Pass the caller's newest-first rows from the
+ * relevant index, capped at MAX_REVEALS_PER_HOUR: limited iff the batch is full
+ * and its oldest row is still inside the window (so all MAX_REVEALS_PER_HOUR
+ * landed within the last hour). Shared by bookings.book and requests.accept.
+ */
+export function isRevealRateLimited(
+  recent: ReadonlyArray<{ _creationTime: number }>,
+  now: number,
+): boolean {
+  return (
+    recent.length >= MAX_REVEALS_PER_HOUR &&
+    recent[recent.length - 1]._creationTime > now - REVEAL_WINDOW_MS
+  );
+}
+
+/**
  * Normalize a Jordanian mobile number to E.164 (+9627XXXXXXXX).
  * Accepts 07XXXXXXXX, 7XXXXXXXX, 9627XXXXXXXX, +9627XXXXXXXX, 009627XXXXXXXX
  * (with spaces/dashes anywhere). Returns null if not a valid Jordanian mobile.

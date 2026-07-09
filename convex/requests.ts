@@ -6,14 +6,16 @@ import { matchTripsForRequest, matchedTripValidator } from "./matching";
 import {
   counterpartUser,
   counterpartUserValidator,
+  isRevealingStatus,
   publicUser,
   publicUserValidator,
+  revealUser,
 } from "./lib/privacy";
 import {
   ammanDayWindow,
+  isRevealRateLimited,
   MAX_OPEN_POSTS,
   MAX_REVEALS_PER_HOUR,
-  REVEAL_WINDOW_MS,
 } from "./lib/shared";
 import { cleanText, isValidPrice } from "./lib/text";
 import {
@@ -196,7 +198,7 @@ export const get = query({
     return {
       ...requestFields(request),
       isMine,
-      passenger: entitled ? counterpartUser(passenger) : publicUser(passenger),
+      passenger: revealUser(passenger, entitled),
     };
   },
 });
@@ -235,8 +237,7 @@ async function linkedBooking(
   return (
     bookings.find(
       (booking) =>
-        booking.requestId === request._id &&
-        (booking.status === "confirmed" || booking.status === "completed"),
+        booking.requestId === request._id && isRevealingStatus(booking.status),
     ) ?? null
   );
 }
@@ -280,7 +281,7 @@ export const mine = query({
     for (const booking of bookings) {
       if (
         booking.requestId !== undefined &&
-        (booking.status === "confirmed" || booking.status === "completed") &&
+        isRevealingStatus(booking.status) &&
         !byRequest.has(booking.requestId)
       ) {
         byRequest.set(booking.requestId, booking);
@@ -366,11 +367,7 @@ export const accept = mutation({
       .withIndex("by_driver", (q) => q.eq("driverId", userId))
       .order("desc")
       .take(MAX_REVEALS_PER_HOUR);
-    if (
-      recentTrips.length >= MAX_REVEALS_PER_HOUR &&
-      recentTrips[recentTrips.length - 1]._creationTime >
-        Date.now() - REVEAL_WINDOW_MS
-    ) {
+    if (isRevealRateLimited(recentTrips, Date.now())) {
       throw new ConvexError("too_many_attempts");
     }
 

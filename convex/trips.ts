@@ -11,10 +11,11 @@ import { matchRequestsForTrip, matchedRequestValidator } from "./matching";
 import { ammanDayWindow, MAX_OPEN_POSTS } from "./lib/shared";
 import { cleanText, isValidPrice } from "./lib/text";
 import {
-  counterpartUser,
   counterpartUserValidator,
+  isRevealingStatus,
   publicUser,
   publicUserValidator,
+  revealUser,
 } from "./lib/privacy";
 import {
   bookingModeValidator,
@@ -242,7 +243,7 @@ export const get = query({
     return {
       ...tripFields(trip),
       isMine,
-      driver: entitled ? counterpartUser(driver) : publicUser(driver),
+      driver: revealUser(driver, entitled),
     };
   },
 });
@@ -259,10 +260,7 @@ async function hasConfirmedBooking(
       q.eq("tripId", tripId).eq("passengerId", userId),
     )
     .take(MAX_BOOKING_ATTEMPTS_PER_TRIP);
-  return bookings.some(
-    (booking) =>
-      booking.status === "confirmed" || booking.status === "completed",
-  );
+  return bookings.some((booking) => isRevealingStatus(booking.status));
 }
 
 /** The signed-in driver's own trips, newest first (activity page). */

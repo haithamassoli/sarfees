@@ -6,7 +6,7 @@ import { useMutation } from "convex/react";
 import type { FunctionReturnType } from "convex/server";
 import { useForm } from "@tanstack/react-form";
 import { BellRing, CircleCheck } from "lucide-react";
-import { FieldError } from "@/components/field-error";
+import { FieldError, FormError } from "@/components/field-error";
 import { GovSelect } from "@/components/gov-select";
 import { PushToggle } from "@/components/push-toggle";
 import { RouteSign } from "@/components/route-sign";
@@ -256,11 +256,7 @@ function NewRequestForm({
               )}
             </form.Field>
 
-            {submitError !== null && (
-              <p role="alert" className="text-sm text-destructive">
-                {submitError}
-              </p>
-            )}
+            <FormError message={submitError} />
 
             <form.Subscribe selector={(state) => state.isSubmitting}>
               {(isSubmitting) => (
@@ -294,9 +290,7 @@ function PostSuccess({ request }: { request: PostedRequest }) {
           <p className="text-sm text-muted-foreground">
             {fmtDayTime(request.desiredAt)}
           </p>
-          <Badge className="bg-plate text-plate-foreground">
-            {seatsLabel(request.seats)}
-          </Badge>
+          <Badge variant="plate">{seatsLabel(request.seats)}</Badge>
         </CardContent>
       </Card>
 

@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Search } from "lucide-react";
+import { FormError } from "@/components/field-error";
 import { GovSelect } from "@/components/gov-select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -64,11 +65,7 @@ export function SearchForm() {
         />
       </div>
 
-      {samePair && (
-        <p role="alert" className="text-sm text-destructive">
-          {t("error_same_gov")}
-        </p>
-      )}
+      {samePair && <FormError message={t("error_same_gov")} />}
 
       <Button type="submit" size="lg" disabled={samePair}>
         <Search size={16} aria-hidden />

@@ -80,3 +80,22 @@ export function counterpartUser(user: Doc<"users">): CounterpartUser {
         }),
   };
 }
+
+/**
+ * The privacy rule's single predicate: a booking reveals phone + plate to its
+ * counterpart only once it is confirmed or completed. Every reveal decision
+ * routes through here so the rule can never drift between call sites.
+ */
+export function isRevealingStatus(
+  status: Doc<"bookings">["status"],
+): boolean {
+  return status === "confirmed" || status === "completed";
+}
+
+/** Shape a joined user for a viewer: full contact when entitled, else public. */
+export function revealUser(
+  user: Doc<"users">,
+  entitled: boolean,
+): CounterpartUser | PublicUser {
+  return entitled ? counterpartUser(user) : publicUser(user);
+}

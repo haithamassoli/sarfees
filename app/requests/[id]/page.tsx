@@ -98,9 +98,7 @@ export default async function RequestPage({
             <span className="text-sm text-muted-foreground">
               {t("seats_requested")}
             </span>
-            <Badge className="bg-plate text-plate-foreground">
-              {seatsLabel(request.seats)}
-            </Badge>
+            <Badge variant="plate">{seatsLabel(request.seats)}</Badge>
           </div>
           {/* Live island: accept dialog / owner controls / passenger contact. */}
           <RequestPanel requestId={request._id} />

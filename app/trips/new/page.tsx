@@ -6,7 +6,7 @@ import { useMutation } from "convex/react";
 import type { FunctionReturnType } from "convex/server";
 import { useForm } from "@tanstack/react-form";
 import { CircleCheck } from "lucide-react";
-import { FieldError } from "@/components/field-error";
+import { FieldError, FormError } from "@/components/field-error";
 import { GovSelect } from "@/components/gov-select";
 import { PushToggle } from "@/components/push-toggle";
 import { RequestCard } from "@/components/request-card";
@@ -348,11 +348,7 @@ function NewTripForm({ onPosted }: { onPosted: (trip: PostedTrip) => void }) {
               )}
             </form.Field>
 
-            {submitError !== null && (
-              <p role="alert" className="text-sm text-destructive">
-                {submitError}
-              </p>
-            )}
+            <FormError message={submitError} />
 
             <form.Subscribe selector={(state) => state.isSubmitting}>
               {(isSubmitting) => (
@@ -390,9 +386,7 @@ function PostSuccess({ trip }: { trip: PostedTrip }) {
             <span className="font-heading text-lg font-semibold">
               {trip.price} {t("jod")}
             </span>
-            <Badge className="bg-plate text-plate-foreground">
-              {seatsLabel(trip.seats)}
-            </Badge>
+            <Badge variant="plate">{seatsLabel(trip.seats)}</Badge>
           </div>
         </CardContent>
       </Card>
